@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ScoreCircle">
+        <attr name="currentScore" format="integer"/>
+        <attr name="maxScore" format="integer"/>
+        <attr name="secondaryText" format="string"/>
+        <attr name="valueDisplayingMode" format="enum">
+            <enum name="scoreAndText" value="0"/>
+            <enum name="currentScore" value="1"/>
+        </attr>
+        <attr name="circleWidth" format="dimension"/>
+        <attr name="circleRadius" format="dimension"/>
+        <attr name="scoreColor" format="color"/>
+        <attr name="secondaryTextColor" format="color"/>
+        <attr name="dotColor" format="color"/>
+        <attr name="primaryCircleColor" format="color"/>
+        <attr name="secondaryCircleColor" format="color"/>
+    </declare-styleable>
+</resources>
