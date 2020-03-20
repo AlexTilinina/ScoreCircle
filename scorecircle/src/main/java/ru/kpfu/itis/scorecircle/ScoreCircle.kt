@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
-import ru.kpfu.itis.scorecircle.util.spToPx
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -72,7 +71,7 @@ class ScoreCircle(context: Context, attrs: AttributeSet) : View(context, attrs) 
             invalidate()
         }
 
-    var secondaryCircleColor: Int = Color.GRAY
+    var backgroundCircleColor: Int = Color.GRAY
         set(value) {
             field = value
             invalidate()
@@ -93,10 +92,12 @@ class ScoreCircle(context: Context, attrs: AttributeSet) : View(context, attrs) 
     private val circlePaint: Paint = Paint()
     private val textPaint: Paint = Paint()
 
-    private val primaryTextSize = spToPx(48F, context)
-    private val secondaryTextSize = spToPx(16F, context)
+    private var dotRadius: Float = 0F
 
-    private var dotRadius : Float = 0F
+    private var completeColor: Int = Color.parseColor("#0097ce")
+    private var fourQuarterColor: Int = Color.parseColor("#53c283")
+    private var threeQuartersColor: Int = Color.parseColor("#f0c300")
+    private var halfColor: Int = Color.parseColor("#d14d57")
 
     init {
         context.theme.obtainStyledAttributes(
@@ -108,16 +109,19 @@ class ScoreCircle(context: Context, attrs: AttributeSet) : View(context, attrs) 
                 currentScore = getInteger(R.styleable.ScoreCircle_currentScore, 0)
                 maxScore = getInteger(R.styleable.ScoreCircle_maxScore, 1000)
                 secondaryText = getString(R.styleable.ScoreCircle_secondaryText) ?: ""
-                valueDisplayingMode = getInt(R.styleable.ScoreCircle_valueDisplayingMode, SCORE_AND_TEXT)
+                valueDisplayingMode =
+                    getInt(R.styleable.ScoreCircle_valueDisplayingMode, SCORE_AND_TEXT)
                 circleWidth = getDimension(R.styleable.ScoreCircle_circleWidth, 0F)
                 circleRadius = getDimension(R.styleable.ScoreCircle_circleRadius, DEFAULT_RADIUS)
                 scoreColor = getColor(R.styleable.ScoreCircle_scoreColor, Color.BLACK)
-                secondaryTextColor = getColor(R.styleable.ScoreCircle_secondaryTextColor, Color.BLACK)
+                secondaryTextColor =
+                    getColor(R.styleable.ScoreCircle_secondaryTextColor, Color.BLACK)
                 dotColor = getColor(R.styleable.ScoreCircle_dotColor, Color.WHITE)
-                primaryCircleColor = getColor(R.styleable.ScoreCircle_primaryCircleColor, Color.GREEN)
-                secondaryCircleColor = getColor(R.styleable.ScoreCircle_secondaryCircleColor, Color.GRAY)
-            }
-            finally {
+                primaryCircleColor =
+                    getColor(R.styleable.ScoreCircle_primaryCircleColor, Color.GREEN)
+                backgroundCircleColor =
+                    getColor(R.styleable.ScoreCircle_backgroundCircleColor, Color.GRAY)
+            } finally {
                 recycle()
             }
         }
@@ -141,32 +145,56 @@ class ScoreCircle(context: Context, attrs: AttributeSet) : View(context, attrs) 
         drawSecondaryCircle(canvas)
         drawPrimaryCircle(canvas)
         drawText(canvas)
+        drawSecondaryText(canvas)
+    }
+
+    fun setColorGradation(completeColor: Int, fourQuarterColor: Int, threeQuartersColor: Int, halfColor: Int) {
+        this.completeColor = completeColor
+        this.fourQuarterColor = fourQuarterColor
+        this.threeQuartersColor = threeQuartersColor
+        this.halfColor = halfColor
+        invalidate()
     }
 
     private fun drawSecondaryCircle(canvas: Canvas?) {
         circlePaint.style = Paint.Style.STROKE
-        circlePaint.color = secondaryCircleColor
+        circlePaint.color = backgroundCircleColor
         circlePaint.strokeWidth = circleWidth * 0.95f
         canvas?.drawCircle(width / 2F, height / 2F, circleRadius, circlePaint)
     }
 
     private fun drawPrimaryCircle(canvas: Canvas?) {
+        val percent = calculatePercent()
         circlePaint.style = Paint.Style.STROKE
         circlePaint.color = primaryCircleColor
-        circlePaint.isDither = true
         circlePaint.strokeWidth = circleWidth
-        val percent = 100 * currentScore / maxScore
         val angle = 360 * percent / 100F
-        val oval = RectF(width / 2F - circleRadius,
+        val oval = RectF(
+            width / 2F - circleRadius,
             height / 2F - circleRadius,
             width / 2F + circleRadius,
-            height / 2F + circleRadius)
+            height / 2F + circleRadius
+        )
         canvas?.drawArc(oval, 90F, angle, false, circlePaint)
-        val endX = (cos(Math.toRadians(90 + angle.toDouble())) * circleRadius + width / 2F).toFloat()
-        val endY = (sin(Math.toRadians(90 + angle.toDouble())) * circleRadius + height / 2F).toFloat()
+        val endX =
+            (cos(Math.toRadians(90 + angle.toDouble())) * circleRadius + width / 2F).toFloat()
+        val endY =
+            (sin(Math.toRadians(90 + angle.toDouble())) * circleRadius + height / 2F).toFloat()
         circlePaint.style = Paint.Style.FILL
         canvas?.drawCircle(endX, endY, circleWidth / 2, circlePaint)
-        drawDot(endX, endY, canvas)
+        if (percent < 100)
+            drawDot(endX, endY, canvas)
+    }
+
+    private fun calculatePercent() : Int {
+        val percent = 100 * currentScore / maxScore
+        primaryCircleColor = when (percent) {
+            in Int.MIN_VALUE..49 -> halfColor
+            in 50..74 -> threeQuartersColor
+            in 75..99 -> fourQuarterColor
+            else -> completeColor
+        }
+        return percent
     }
 
     private fun drawDot(x: Float, y: Float, canvas: Canvas?) {
@@ -179,26 +207,28 @@ class ScoreCircle(context: Context, attrs: AttributeSet) : View(context, attrs) 
         textPaint.textSize = circleRadius * 2 / 5f
         textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD);
         val text = currentScore.toString()
-        var textWidth = textPaint.measureText(text)
-        var textX = width / 2f - textWidth / 2f
-        var textY = height / 2f
+        val textWidth = textPaint.measureText(text)
+        val textX = width / 2f - textWidth / 2f
+        val textY = height / 2f
         canvas?.drawText(text, textX, textY, textPaint)
-        if (valueDisplayingMode == SCORE_AND_TEXT) {
-            if (secondaryText.isNotEmpty()) {
-                textPaint.color = secondaryTextColor
-                textPaint.textSize = textPaint.textSize / 3
-                textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
-                textWidth = textPaint.measureText(secondaryText)
-                textX = width / 2f - textWidth / 2f
-                textY = height / 2f + textPaint.textSize * 2
-                canvas?.drawText(secondaryText, textX, textY, textPaint)
-            }
+    }
+
+    private fun drawSecondaryText(canvas: Canvas?) {
+        if (valueDisplayingMode == SCORE_AND_TEXT && secondaryText.isNotEmpty()) {
+            textPaint.color = secondaryTextColor
+            textPaint.textSize = textPaint.textSize / 3
+            textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
+            val textWidth = textPaint.measureText(secondaryText)
+            val textX = width / 2f - textWidth / 2f
+            val textY = height / 2f + textPaint.textSize * 2
+            canvas?.drawText(secondaryText, textX, textY, textPaint)
         }
     }
 
     private fun initPaint() {
         circlePaint.style = Paint.Style.STROKE
         circlePaint.isAntiAlias = true
+        circlePaint.isDither = true
 
         textPaint.style = Paint.Style.FILL
         textPaint.isAntiAlias = true
