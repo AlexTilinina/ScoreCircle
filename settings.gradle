@@ -1,3 +1,4 @@
 rootProject.name='ScoreCircle'
 include ':app'
 include ':scorecircle'
+include ':circlesdiagramview'

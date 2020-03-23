@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CirclesDiagramView">
+        <attr name="circleCount" format="integer"/>
+        <attr name="maxScore" format="integer"/>
+        <attr name="primaryText" format="string"/>
+        <attr name="secondaryText" format="string"/>
+        <attr name="commentaryText" format="string"/>
+        <attr name="circleWidth" format="dimension"/>
+        <attr name="outerCircleRadius" format="dimension"/>
+        <attr name="innerTextColor" format="color"/>
+        <attr name="commentaryTextColor" format="color"/>
+        <attr name="commentaryLineColor" format="color"/>
+        <attr name="dotColor" format="color"/>
+        <attr name="backgroundCircleColor" format="color"/>
+    </declare-styleable>
+</resources>

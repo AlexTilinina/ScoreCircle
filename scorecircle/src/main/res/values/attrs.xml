@@ -13,7 +13,6 @@
         <attr name="scoreColor" format="color"/>
         <attr name="secondaryTextColor" format="color"/>
         <attr name="dotColor" format="color"/>
-        <attr name="primaryCircleColor" format="color"/>
         <attr name="backgroundCircleColor" format="color"/>
     </declare-styleable>
 </resources>
