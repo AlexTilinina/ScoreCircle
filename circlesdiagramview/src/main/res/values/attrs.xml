@@ -11,6 +11,7 @@
         <attr name="innerTextColor" format="color"/>
         <attr name="commentaryTextColor" format="color"/>
         <attr name="commentaryLineColor" format="color"/>
+        <attr name="labelsTextColor" format="color"/>
         <attr name="dotColor" format="color"/>
         <attr name="backgroundCircleColor" format="color"/>
     </declare-styleable>

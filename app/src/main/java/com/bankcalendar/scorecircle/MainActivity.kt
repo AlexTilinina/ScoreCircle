@@ -9,6 +9,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        circlesDiagramView.setValues(13000, 0, 23000, 0)
+        val list0 = mutableListOf(0, 0, 0, 0)
+        val list1 = mutableListOf(0, 0, 0, 12000)
+        val list2 = mutableListOf(5000, 0, 0, 12000)
+        val list3 = mutableListOf(5000, 30000, 0, 12000)
+        val list4 = mutableListOf(5000, 30000, 10000, 12000)
+        circlesDiagramView.setValues(list4)
     }
 }
