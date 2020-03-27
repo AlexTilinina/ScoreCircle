@@ -3,6 +3,7 @@ package com.bankcalendar.circlesview
 import android.content.Context
 import android.graphics.*
 import android.os.Build
+import android.os.Parcelable
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -169,6 +170,7 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
             }
         }
         initPaint()
+        isSaveEnabled = true
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -181,7 +183,7 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
         }
         val valueCount = circleValues.count { it > 0 }
         val forBottom = if (valueCount != 0) {
-            outerCircleRadius / 4 + (circleWidth * 3f + dotRadius * 1.5f) * valueCount
+            outerCircleRadius / 4 + (circleWidth * 3f) * valueCount
         } else {
             0f
         }
@@ -455,16 +457,19 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
         if (circleWidth == DEFAULT_WIDTH) {
             circleWidth = outerCircleRadius / 9
         }
-        outerCircleRadius -= circleWidth / 2
-        dotRadius = circleWidth / 4f
+        if (dotRadius == DEFAULT_WIDTH / 4) {
+            dotRadius = circleWidth / 4f
+        }
         circleRadiuses.add(outerCircleRadius)
         if (circleCount > 1) {
             for (i in 1 until circleCount) {
                 circleRadiuses.add(circleRadiuses[i - 1] - circleWidth * 1.2f)
             }
         }
-        for (i in 0 until circleCount) {
-            circleValues.add(0)
+        if (circleValues.isEmpty()) {
+            for (i in 0 until circleCount) {
+                circleValues.add(0)
+            }
         }
         if (commentaryText.isNotEmpty()) {
             commentaryHeight = outerCircleRadius / 2
@@ -479,5 +484,53 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
             MeasureSpec.AT_MOST -> if (contentSize < specSize) contentSize else specSize
             else -> contentSize // MeasureSpec.UNSPECIFIED
         }
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        val savedState = super.onSaveInstanceState()?.let { SavedState(it) }
+        savedState?.maxScore = maxScore
+        savedState?.secondaryText = secondaryText
+        savedState?.commentaryText = commentaryText
+        savedState?.innerTextColor = innerTextColor
+        savedState?.primaryText = primaryText
+        savedState?.commentaryTextColor = commentaryTextColor
+        savedState?.labelsTextColor = labelsTextColor
+        savedState?.commentaryLineColor = commentaryLineColor
+        savedState?.dotColor = dotColor
+        savedState?.backgroundCircleColor = backgroundCircleColor
+        savedState?.circleWidth = circleWidth
+        savedState?.outerCircleRadius = outerCircleRadius
+        savedState?.circleRadiuses = circleRadiuses
+        savedState?.circleValues = circleValues
+        savedState?.circleValueLabels = circleValueLabels
+        savedState?.percents = percents
+        savedState?.dotRadius = dotRadius
+        savedState?.commentaryHeight = commentaryHeight
+        savedState?.bottomLabelsMargin = bottomLabelsMargin
+        return savedState
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        val savedState = state as SavedState
+        super.onRestoreInstanceState(savedState)
+        maxScore = savedState.maxScore
+        secondaryText = savedState.secondaryText
+        commentaryText = savedState.commentaryText
+        innerTextColor = savedState.innerTextColor
+        primaryText = savedState.primaryText
+        commentaryTextColor = savedState.commentaryTextColor
+        labelsTextColor = savedState.labelsTextColor
+        commentaryLineColor = savedState.commentaryLineColor
+        dotColor = savedState.dotColor
+        backgroundCircleColor = savedState.backgroundCircleColor
+        outerCircleRadius = savedState.outerCircleRadius
+        circleRadiuses = savedState.circleRadiuses
+        circleValues = savedState.circleValues
+        circleValueLabels = savedState.circleValueLabels
+        percents = savedState.percents
+        dotRadius = savedState.dotRadius
+        commentaryHeight = savedState.commentaryHeight
+        bottomLabelsMargin = savedState.bottomLabelsMargin
+        invalidate()
     }
 }
