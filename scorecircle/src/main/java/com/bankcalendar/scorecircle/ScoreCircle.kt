@@ -15,6 +15,7 @@ class ScoreCircle(context: Context, attrs: AttributeSet) : View(context, attrs) 
         const val SCORE_AND_TEXT = 0
         const val CURRENT_SCORE = 1
         const val DEFAULT_RADIUS = 100F
+        const val DEFAULT_WIDTH = DEFAULT_RADIUS / 6f
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : this(context, attrs)
@@ -77,13 +78,13 @@ class ScoreCircle(context: Context, attrs: AttributeSet) : View(context, attrs) 
             invalidate()
         }
 
-    private var circleWidth: Float = 0F
-    private var circleRadius: Float = 0F
+    private var circleWidth: Float = DEFAULT_WIDTH
+    private var circleRadius: Float = DEFAULT_RADIUS
 
     private val circlePaint: Paint = Paint()
     private val textPaint: Paint = Paint()
 
-    private var dotRadius: Float = 0F
+    private var dotRadius: Float = DEFAULT_WIDTH / 4
 
     private var completeColor: Int = Color.parseColor("#0097ce")
     private var fourQuarterColor: Int = Color.parseColor("#53c283")
@@ -105,7 +106,7 @@ class ScoreCircle(context: Context, attrs: AttributeSet) : View(context, attrs) 
                         R.styleable.ScoreCircle_valueDisplayingMode,
                         SCORE_AND_TEXT
                     )
-                circleWidth = getDimension(R.styleable.ScoreCircle_circleWidth, 0F)
+                circleWidth = getDimension(R.styleable.ScoreCircle_circleWidth, DEFAULT_WIDTH)
                 circleRadius = getDimension(
                     R.styleable.ScoreCircle_circleRadius,
                     DEFAULT_RADIUS
@@ -246,13 +247,15 @@ class ScoreCircle(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
     private fun initCircleMeasurementsIfEmpty() {
         if (circleRadius == DEFAULT_RADIUS) {
-            circleRadius = width / 2f
+            circleRadius = if (width < height) width / 2f else height / 2f
         }
-        if (circleWidth == 0F) {
+        if (circleWidth == DEFAULT_WIDTH) {
             circleWidth = circleRadius / 6
+            circleRadius -= circleWidth / 2
         }
-        circleRadius -= circleWidth / 2
-        dotRadius = circleWidth / 4f
+        if (dotRadius == DEFAULT_WIDTH / 4) {
+            dotRadius = circleWidth / 4f
+        }
     }
 
     private fun calculateSize(contentSize: Int, measureSpec: Int): Int {

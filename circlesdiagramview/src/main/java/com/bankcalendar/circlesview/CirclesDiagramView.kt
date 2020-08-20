@@ -9,16 +9,17 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import com.bankcalendar.circlesview.util.draw
+import com.bankcalendar.circlesview.util.formatNumber
 import kotlin.math.cos
 import kotlin.math.sin
-import com.bankcalendar.circlesview.util.draw
 
 
 class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     companion object {
-        const val DEFAULT_RADIUS = 200F
-        const val DEFAULT_WIDTH = DEFAULT_RADIUS / 9f
+        const val DEFAULT_RADIUS = 300F
+        const val DEFAULT_WIDTH = DEFAULT_RADIUS / 11f
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : this(context, attrs)
@@ -31,7 +32,7 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
     private val baseTextColor = Color.parseColor("#34495e")
     private val baseCommentaryTextColor = Color.parseColor("#96a6a7")
     private val baseBackgroundCircleColor = Color.parseColor("#e1e5e7")
-    private val baseCommentaryLineColor = Color.parseColor("#979797")
+    private val baseCommentaryLineColor = Color.parseColor("#96a6a7")
     private val baseLabelsTextColor = Color.parseColor("#2c3e50")
 
     var maxScore: Int = 0
@@ -101,21 +102,25 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
     private var circleValues = mutableListOf<Int>()
     private var circleValueLabels = mutableListOf(
         "Потребительский", "Автокредит",
-        "Ипотека", "Кредитная карта"
+        "Ипотека", "Кредитная карта", "Микрокредит", "Прочее"
     )
     private var percents = mutableListOf<Int>()
 
     private val colors = listOf(
-        Color.parseColor("#d14d57"),
-        Color.parseColor("#f0c300"),
-        Color.parseColor("#53c283"),
-        Color.parseColor("#0097ce")
+        Color.parseColor("#0097CE"),
+        Color.parseColor("#53C283"),
+        Color.parseColor("#F0C300"),
+        Color.parseColor("#D14D57"),
+        Color.parseColor("#9d34af"),
+        Color.parseColor("#4778ff")
     )
     private val darkerColors = listOf(
-        Color.parseColor("#c3454f"),
-        Color.parseColor("#e0b600"),
+        Color.parseColor("#0084b5"),
         Color.parseColor("#4fab77"),
-        Color.parseColor("#0084b5")
+        Color.parseColor("#e0b600"),
+        Color.parseColor("#c3454f"),
+        Color.parseColor("#902ea1"),
+        Color.parseColor("#3c64d2")
     )
 
     private var circleCount = 4
@@ -164,7 +169,7 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
                     R.styleable.CirclesDiagramView_backgroundCircleColor,
                     baseBackgroundCircleColor
                 )
-                circleCount = getInteger(R.styleable.CirclesDiagramView_circleCount, 4)
+                circleCount = getInteger(R.styleable.CirclesDiagramView_circleCount, 6)
             } finally {
                 recycle()
             }
@@ -183,12 +188,12 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
         }
         val valueCount = circleValues.count { it > 0 }
         val forBottom = if (valueCount != 0) {
-            outerCircleRadius / 4 + (circleWidth * 3f) * valueCount
+            outerCircleRadius / 4f + (circleWidth * 3f) * valueCount
         } else {
             0f
         }
         val needHeight = paddingTop + paddingBottom + suggestedMinimumHeight +
-                outerCircleRadius * 2 + outerCircleRadius / 2 + forBottom
+                outerCircleRadius * 2 + circleWidth + outerCircleRadius / 2 + forBottom
         val measuredWidth = calculateSize(needWidth.toInt(), widthMeasureSpec)
         val measuredHeight = calculateSize(needHeight.toInt(), heightMeasureSpec)
         setMeasuredDimension(measuredWidth, measuredHeight)
@@ -216,9 +221,9 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
     }
 
     fun setData(values: MutableList<Int>, labels: MutableList<String>, percents: MutableList<Int>) {
-        circleValues = values
         bottomLabelsMargin =
             outerCircleRadius / 2 + circleWidth * 2 * circleValues.count { it != 0 }
+        circleValues = values
         circleValueLabels = labels
         this.percents = percents
         invalidate()
@@ -226,6 +231,9 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
 
     fun setValues(values: MutableList<Int>) {
         circleValues = values
+        while (circleValues.size < circleCount) {
+            circleValues.add(0)
+        }
         bottomLabelsMargin =
             outerCircleRadius / 2 + circleWidth * 2 * circleValues.count { it != 0 }
         invalidate()
@@ -241,25 +249,30 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
         invalidate()
     }
 
+    /*
+    * Draws grey circles on background*/
     private fun drawSecondaryCircles(canvas: Canvas?) {
         circlePaint.style = Paint.Style.STROKE
         circlePaint.color = backgroundCircleColor
         circlePaint.strokeWidth = circleWidth * 0.95f
         for (i in 0 until circleCount) {
-            if (circleValues[i] == 0) {
+            //if (circleValues[i] == 0) {
                 canvas?.drawCircle(
                     width / 2F,
                     commentaryHeight + outerCircleRadius,
                     circleRadiuses[i],
                     circlePaint
                 )
-            } else {
+            /*} else {
                 val oval = getOval(circleRadiuses[i])
                 canvas?.drawArc(oval, 270F, 180F, false, circlePaint)
-            }
+            }*/
         }
     }
 
+    /*
+    * Draws colorful circles
+    * */
     private fun drawPrimaryCircles(canvas: Canvas?) {
         for (i in 0 until circleCount) {
             if (circleValues.all { it == 0 }) {
@@ -277,7 +290,7 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
                         100 * circleValues[i] / maxScore
                     }
                     circlePaint.style = Paint.Style.STROKE
-                    circlePaint.color = colors[i]
+                    circlePaint.color = colors[circleCount - 1 - i]
                     circlePaint.strokeWidth = circleWidth
                     val angle = 360 * percent / 100F
                     val oval = getOval(circleRadiuses[i])
@@ -285,7 +298,7 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
                         canvas?.drawArc(oval, 90F, angle, false, circlePaint)
                     } else {
                         canvas?.drawArc(oval, 90F, 181F, false, circlePaint)
-                        circlePaint.color = darkerColors[i]
+                        circlePaint.color = darkerColors[circleCount - 1 - i]
                         canvas?.drawArc(oval, 270F, angle - 180, false, circlePaint)
                     }
                     val endX = (cos(Math.toRadians(90 + angle.toDouble()))
@@ -301,6 +314,9 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
         }
     }
 
+    /*
+    * Draws little white dot
+    * Used on the end of colorful circles */
     private fun drawDot(x: Float, y: Float, color: Int, canvas: Canvas?) {
         circlePaint.color = color
         canvas?.drawCircle(x, y, circleWidth / 3.5f, circlePaint)
@@ -313,21 +329,25 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
         commentaryHeight + outerCircleRadius + radius
     )
 
+    /*
+    * Draws big inner text*/
     private fun drawInnerText(canvas: Canvas?) {
         textPaint.color = innerTextColor
-        textPaint.textSize = outerCircleRadius / 3f
+        textPaint.textSize = circleRadiuses.last() / 1.7F
         textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         val textWidth = textPaint.measureText(primaryText)
         val textX = width / 2f - textWidth / 2f
         val textY = if (secondaryText.isEmpty()) {
             commentaryHeight + outerCircleRadius + textPaint.textSize / 3
         } else {
-            commentaryHeight + outerCircleRadius
+            commentaryHeight + outerCircleRadius + textPaint.textSize / 9
         }
         canvas?.drawText(primaryText, textX, textY, textPaint)
         drawSecondaryText(canvas)
     }
 
+    /*
+    * Draws small inner text*/
     private fun drawSecondaryText(canvas: Canvas?) {
         if (secondaryText.isNotEmpty()) {
             textPaint.textSize = textPaint.textSize / 2.25F
@@ -339,6 +359,8 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
         }
     }
 
+    /*
+    * Draws text above circle*/
     private fun drawCommentaryText(canvas: Canvas?) {
         if (commentaryText.isNotEmpty()) {
             textPaint.color = commentaryTextColor
@@ -374,9 +396,9 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
         val dotX = dotRadius * 6
         for (i in 0 until circleCount) {
             if (circleValues[i] > 0) {
-                drawDot(dotX, dotY, colors[i], canvas)
+                drawDot(dotX, dotY, colors[circleCount - 1 - i], canvas)
                 writeLabelText(dotX, dotY, i, canvas)
-                dotY += circleWidth * 2f
+                dotY += circleWidth * 2.5f
             }
         }
     }
@@ -405,9 +427,11 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
 
     private fun writeValueText(textX: Float, textY: Float, index: Int, canvas: Canvas?) {
         textPaint.color = labelsTextColor
-        canvas?.drawText("${circleValues[index]}₽", calculateValueX(textX), textY, textPaint)
+        canvas?.drawText(circleValues[index].formatNumber(), calculateValueX(textX), textY, textPaint)
     }
 
+    /*
+    * Draws dotted line between label and value */
     private fun drawLabelLine(textX: Float, textY: Float, canvas: Canvas?) {
         linePaint.pathEffect = DashPathEffect(floatArrayOf(5f, 5f), 0f)
         linePaint.color = Color.parseColor("#bec4c8")
@@ -422,7 +446,7 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
     private fun calculatePercentX(): Float = width - textPaint.measureText("100%") - dotRadius * 2
 
     private fun calculateValueX(textX: Float): Float =
-        textX - textPaint.measureText("${circleValues.max()}₽") - dotRadius * 3
+        textX - textPaint.measureText(circleValues.max()?.formatNumber()) - dotRadius * 3
 
     private fun drawCommentaryLine(canvas: Canvas?) {
         val x = width / 2F
@@ -430,7 +454,7 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
         val path = Path()
         path.moveTo(x, y)
         path.lineTo(x, y - circleWidth)
-        path.lineTo(x + width / 3.5F, y - circleWidth)
+        path.lineTo(x + width / 3F, y - circleWidth)
         canvas?.drawPath(path, linePaint)
     }
 
@@ -445,9 +469,9 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
 
         linePaint.style = Paint.Style.STROKE
         linePaint.color = baseCommentaryLineColor
-        linePaint.strokeWidth = 2F
+        linePaint.strokeWidth = 3F
         linePaint.isAntiAlias = true
-        linePaint.pathEffect = DashPathEffect(floatArrayOf(15f, 5f), 0f)
+        // linePaint.pathEffect = DashPathEffect(floatArrayOf(15f, 5f), 0f)
     }
 
     private fun initCircleMeasurementsIfEmpty() {
@@ -455,7 +479,7 @@ class CirclesDiagramView(context: Context, attrs: AttributeSet) : View(context, 
             outerCircleRadius = height * 0.27f
         }
         if (circleWidth == DEFAULT_WIDTH) {
-            circleWidth = outerCircleRadius / 9
+            circleWidth = outerCircleRadius / 11
         }
         if (dotRadius == DEFAULT_WIDTH / 4) {
             dotRadius = circleWidth / 4f
