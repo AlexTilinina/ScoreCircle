@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ScorePointView">
+        <attr name="score" format="integer"/>
+        <attr name="maxScore" format="integer"/>
+
+        <attr name="innerText" format="string"/>
+        <attr name="innerTextColor" format="color"/>
+
+        <attr name="secondaryText" format="string"/>
+        <attr name="secondaryTextColor" format="color"/>
+
+        <attr name="tertiaryText" format="string"/>
+        <attr name="tertiaryTextColor" format="color"/>
+
+        <attr name="circleWidth" format="dimension"/>
+        <attr name="circleRadius" format="dimension"/>
+        <attr name="circleColor" format="color"/>
+
+        <attr name="outerCircleRadius" format="dimension"/>
+        <attr name="outerCircleWidth" format="dimension"/>\
+    </declare-styleable>
+</resources>

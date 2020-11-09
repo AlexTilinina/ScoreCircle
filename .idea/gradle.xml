@@ -13,9 +13,11 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/circlesdiagramview" />
             <option value="$PROJECT_DIR$/scorecircle" />
+            <option value="$PROJECT_DIR$/scorepoint" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
+        <option name="useQualifiedModuleNames" value="true" />
       </GradleProjectSettings>
     </option>
   </component>

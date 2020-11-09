@@ -11,19 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.bankcalendar.circlesview.CirclesDiagramView
+        <com.bankcalendar.scorepoint.ScorePointView
             android:id="@+id/circlesDiagramView"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:circleCount="4"
-            app:commentaryText="Предельная кредитная нагрузка 50%"
+            android:layout_marginTop="38dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:maxScore="40000"
-            app:outerCircleRadius="120dp"
-            app:secondaryText="средне"
-            app:primaryText="30%" />
+            app:maxScore="1000"
+            app:secondaryText="достоверность"
+            app:tertiaryText="65%"
+            app:outerCircleRadius="100dp" />
 
         <com.bankcalendar.scorecircle.ScoreCircle
             android:id="@+id/score_circle"
@@ -48,13 +47,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/circlesDiagramView" />
-
-        <FrameLayout
-            android:id="@+id/covid_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/test2"></FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </ScrollView>
