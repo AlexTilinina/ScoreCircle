@@ -39,6 +39,7 @@ dependencies {
     api project(path: ':scorecircle')
     api project(path: ':circlesdiagramview')
     api project(path: ':scorepoint')
+    api project(path: ':fullscoreview')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'

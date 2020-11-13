@@ -17,7 +17,16 @@ class MainActivity : AppCompatActivity() {
         val list3 = mutableListOf(5000, 30000, 0, 12000)
         val list4 = mutableListOf(5000, 30000, 10000, 12000)
 
-        val score = 550
+        val colors = intArrayOf(
+            ContextCompat.getColor(this, R.color.colorScorePointRed),
+            ContextCompat.getColor(this, R.color.colorScorePointYellow),
+            ContextCompat.getColor(this, R.color.colorScorePointGreen),
+            ContextCompat.getColor(this, R.color.colorScorePointBlue),
+            ContextCompat.getColor(this, R.color.colorScorePointPurple)
+        )
+        val scoreList = intArrayOf(800, 0, 600, 500, 1000)
+
+        val score = scoreList.filter { it != 0 }.average().toInt()
         val color = when (score) {
             in 0..249 -> R.color.colorScorePointRed
             in 250..499 -> R.color.colorScorePointYellow
@@ -25,7 +34,8 @@ class MainActivity : AppCompatActivity() {
             in 750..999 -> R.color.colorScorePointBlue
             else -> R.color.colorScorePointPurple
         }
-        circlesDiagramView.score = score
-        circlesDiagramView.circleColor = ContextCompat.getColor(this, color)
+        circlesDiagramView.primaryText = score.toString()
+        circlesDiagramView.scoreList = scoreList
+        circlesDiagramView.circleColors = colors
     }
 }

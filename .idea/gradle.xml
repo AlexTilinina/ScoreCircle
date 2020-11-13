@@ -12,6 +12,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/circlesdiagramview" />
+            <option value="$PROJECT_DIR$/dynamicgraph" />
+            <option value="$PROJECT_DIR$/fullscoreview" />
             <option value="$PROJECT_DIR$/scorecircle" />
             <option value="$PROJECT_DIR$/scorepoint" />
           </set>

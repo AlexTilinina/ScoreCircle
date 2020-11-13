@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FullScoreView">
+        <attr name="maxScore" format="integer"/>
+
+        <attr name="primaryText" format="string"/>
+        <attr name="primaryTextColor" format="color"/>
+
+        <attr name="secondaryText" format="string"/>
+        <attr name="secondaryTextColor" format="color"/>
+
+        <attr name="tertiaryText" format="string"/>
+        <attr name="tertiaryTextColor" format="color"/>
+
+        <attr name="circleWidth" format="dimension"/>
+        <attr name="circleRadius" format="dimension"/>
+
+        <attr name="outerCircleRadius" format="dimension"/>
+        <attr name="outerCircleWidth" format="dimension"/>
+    </declare-styleable>
+</resources>
