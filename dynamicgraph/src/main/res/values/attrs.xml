@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DynamicsGraphView">
+        <attr name="yAxisMaxValue" format="integer"/>
+
+        <attr name="xAxisValuesCount" format="integer"/>
+        <attr name="yAxisValuesCount" format="integer"/>
+
+        <attr name="axisColor" format="color"/>
+
+        <attr name="textColor" format="color"/>
+
+        <attr name="curveColor" format="color"/>
+        <attr name="curveWidth" format="dimension"/>
+
+        <attr name="monthColor" format="color"/>
+        <attr name="currentMonthColor" format="color"/>
+    </declare-styleable>
+</resources>

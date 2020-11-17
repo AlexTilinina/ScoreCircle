@@ -190,20 +190,8 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
     /**
     * Draws white arcs*/
     private fun drawWhiteCircle(canvas: Canvas?) {
-        /*circlePaint.style = Paint.Style.FILL
-        circlePaint.color = Color.WHITE
-        circlePaint.shader = null
-        val x = width / 2F + calculateHorizontalPadding()
-        val y = outerCircleWidth / 2F + outerCircleRadius + paddingTop +
-                secondaryCircleWidth * 2 + secondaryCircleRadius * 2
-
-        canvas?.drawCircle(x, y, circleRadius, circlePaint)
-
-        circlePaint.style = Paint.Style.STROKE
-        circlePaint.strokeWidth = circleWidth
-        circlePaint.color = Color.parseColor("#DFE4E5")
-        canvas?.drawCircle(x, y, circleRadius, circlePaint)*/
-        val centerY = outerCircleRadius + outerCircleWidth / 2f + secondaryCircleWidth * 2 + secondaryCircleRadius * 2 + paddingTop
+        val centerY = outerCircleRadius + outerCircleWidth / 2f +
+                secondaryCircleWidth * 2 + secondaryCircleRadius * 2 + paddingTop
 
         val oval = getOval(width / 2f, centerY, circleRadius)
 
@@ -222,14 +210,12 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
             val angleStart = currentAngle + gap
             val angleEnd = step - gap * 2
 
-
             canvas?.drawArc(oval, angleStart, angleEnd, false, circlePaint)
 
             circlePaint.style = Paint.Style.FILL
 
-            val startX =
-                (cos(Math.toRadians(angleStart.toDouble())) * circleRadius + width / 2F).toFloat() +
-                        calculateHorizontalPadding()
+            val startX = (cos(Math.toRadians(angleStart.toDouble()))
+                    * circleRadius + width / 2F).toFloat() + calculateHorizontalPadding()
             val startY = (sin(Math.toRadians(angleStart.toDouble()))
                     * circleRadius + centerY).toFloat() + paddingTop
             canvas?.drawCircle(startX, startY, circleWidth / 2, circlePaint)
@@ -254,8 +240,7 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
             val oval = getOval(width / 2F, centerY, circleRadius)
             val step = (360 / scoreList.size).toFloat()
             val gap = 6f
-            /*var prevAngle = 72f
-            var prevColor = circleColors[scoreList.indexOfFirst { it != 0 }]*/
+
             for (i in scoreList.indices) {
 
                 if (scoreList[i] != 0) {
@@ -287,21 +272,6 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
                     val endY = (sin(Math.toRadians((angleStart + angleEnd).toDouble()))
                             * circleRadius + centerY).toFloat() + paddingTop
                     canvas?.drawCircle(endX, endY, circleWidth / 2, circlePaint)
-
-                    /*if (percent * 5 >= 90) {
-                        circlePaint.style = Paint.Style.FILL
-                        circlePaint.color = prevColor
-                        val prevCur = currentAngle + prevAngle - 72
-                        val prevX =
-                            (cos(Math.toRadians(prevCur.toDouble())) * circleRadius + width / 2F).toFloat() +
-                                    calculateHorizontalPadding()
-                        val prevY = (sin(Math.toRadians(prevCur.toDouble()))
-                                * circleRadius + centerY).toFloat() + paddingTop
-                        canvas?.drawCircle(prevX, prevY, circleWidth / 2, circlePaint)
-                    }
-
-                    prevColor = circleColors[i]
-                    prevAngle = angle*/
                 }
             }
         }
@@ -429,6 +399,7 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
         // radius of circle where outer circles are placed
         val outerSecondaryRadius = outerCircleRadius + outerCircleWidth / 2 +
                 secondaryCircleRadius + secondaryCircleWidth
+        val step = (360 / scoreList.size).toFloat()
 
         for (i in scoreList.indices) {
             // coordinates of circle center
@@ -450,15 +421,8 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
             drawSecondaryCircle(x, y, canvas)
             drawIndividualScoreValue(scoreList[i], circleColors[i], x, y, canvas)
             drawIndividualScoreText(scoreList[i], x, y, canvas)
-            prevAngle += 72
+            prevAngle += step
         }
-        /*prevAngle = 126F + 72 * (scoreList.filter { it != 0 }.size)
-        while (prevAngle <= 126 + 72 * 4) {
-            val x = calculateSecondaryCircleX(prevAngle, outerSecondaryRadius)
-            val y = calculateSecondaryCircleY(prevAngle, outerSecondaryRadius)
-            drawSecondaryCircle(x, y, canvas)
-            prevAngle += 72
-        }*/
     }
 
     /**

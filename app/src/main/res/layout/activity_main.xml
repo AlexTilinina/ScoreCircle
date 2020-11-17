@@ -17,13 +17,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="38dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:maxScore="5000"
             app:outerCircleRadius="90dp"
             app:secondaryText="достоверность"
-            app:tertiaryText="65%"/>
+            app:tertiaryText="65%" />
 
         <com.bankcalendar.scorecircle.ScoreCircle
             android:id="@+id/score_circle"
@@ -39,5 +40,12 @@
             app:maxScore="1000"
             app:primaryText="228%"
             app:secondaryText="text" />
+
+        <ru.kpfu.itis.dynamicgraph.DynamicsGraphView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
