@@ -9,6 +9,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import com.bankcalendar.fullscoreview.util.dpToPx
 import com.bankcalendar.fullscoreview.util.draw
 import kotlin.math.cos
 import kotlin.math.sin
@@ -75,7 +76,13 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
             invalidate()
         }
 
-    var circleColors: IntArray = intArrayOf(baseCircleColor)
+    var circleColors: IntArray = intArrayOf(
+        baseCircleColor,
+        baseCircleColor,
+        baseCircleColor,
+        baseCircleColor,
+        baseCircleColor
+    )
         set(value) {
             field = value
             invalidate()
@@ -91,6 +98,8 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
     private val circlePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
     private val linePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    private lateinit var shadow: RadialGradient
 
     init {
         context.theme.obtainStyledAttributes(
@@ -159,11 +168,12 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
         drawSecondaryCircles(canvas)
         drawWhiteCircle(canvas)
         drawPrimaryCircle(canvas)
+        drawGaps(canvas)
         drawInnerText(canvas)
     }
 
     /**
-    * Draws shadow on background*/
+     * Draws shadow on background*/
     private fun drawShadow(canvas: Canvas?) {
         circlePaint.style = Paint.Style.FILL
         val x = width / 2F + calculateHorizontalPadding()
@@ -175,7 +185,7 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
         val gradientBackgroundString = String.format("%06X", (0xFFFFFF and shadowColor))
         val gradientBackgroundColor = Color.parseColor("#17$gradientBackgroundString")
 
-        circlePaint.shader = RadialGradient(
+        shadow = RadialGradient(
             x + 10f,
             y + 10f,
             outerCircleRadius,
@@ -184,11 +194,13 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
             Shader.TileMode.CLAMP
         )
 
+        circlePaint.shader = shadow
+
         canvas?.drawCircle(x, y, outerCircleRadius + outerCircleWidth / 2, circlePaint)
     }
 
     /**
-    * Draws white arcs*/
+     * Draws white arcs*/
     private fun drawWhiteCircle(canvas: Canvas?) {
         val centerY = outerCircleRadius + outerCircleWidth / 2f +
                 secondaryCircleWidth * 2 + secondaryCircleRadius * 2 + paddingTop
@@ -207,12 +219,12 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
             circlePaint.style = Paint.Style.STROKE
 
             val currentAngle = 90F + step * i
-            val angleStart = currentAngle + gap
-            val angleEnd = step - gap * 2
+            val angleStart = currentAngle /*+ gap*/
+            val angleEnd = step /*- gap * 2*/
 
             canvas?.drawArc(oval, angleStart, angleEnd, false, circlePaint)
 
-            circlePaint.style = Paint.Style.FILL
+            /*circlePaint.style = Paint.Style.FILL
 
             val startX = (cos(Math.toRadians(angleStart.toDouble()))
                     * circleRadius + width / 2F).toFloat() + calculateHorizontalPadding()
@@ -224,18 +236,19 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
                     * circleRadius + width / 2F).toFloat() + calculateHorizontalPadding()
             val endY = (sin(Math.toRadians((currentAngle + step - gap).toDouble()))
                     * circleRadius + centerY).toFloat() + paddingTop
-            canvas?.drawCircle(endX, endY, circleWidth / 2, circlePaint)
+            canvas?.drawCircle(endX, endY, circleWidth / 2, circlePaint)*/
         }
 
     }
 
     /**
-    * Draws colored arcs
-    * */
+     * Draws colored arcs
+     * */
     private fun drawPrimaryCircle(canvas: Canvas?) {
         if ((scoreList.isNotEmpty() && scoreList.any { it != 0 }) && circleColors.isNotEmpty() && scoreList.size <= circleColors.size) {
 
-            val centerY = outerCircleRadius + outerCircleWidth / 2F + secondaryCircleWidth * 2 + secondaryCircleRadius * 2 + paddingTop
+            val centerY =
+                outerCircleRadius + outerCircleWidth / 2F + secondaryCircleWidth * 2 + secondaryCircleRadius * 2 + paddingTop
 
             val oval = getOval(width / 2F, centerY, circleRadius)
             val step = (360 / scoreList.size).toFloat()
@@ -252,12 +265,12 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
                     val percent = 100 * scoreList[i] / maxScore
                     val angle = 360 * percent / 100F
 
-                    val angleStart = 90F + step * i + gap
-                    val angleEnd = angle - gap * 2
+                    val angleStart = 90F + step * i /*+ gap*/
+                    val angleEnd = angle /*- gap * 2*/
 
                     canvas?.drawArc(oval, angleStart, angleEnd, false, circlePaint)
 
-                    circlePaint.style = Paint.Style.FILL
+                    /*circlePaint.style = Paint.Style.FILL
 
                     val startX =
                         (cos(Math.toRadians(angleStart.toDouble())) * circleRadius + width / 2F).toFloat() +
@@ -271,7 +284,7 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
                             * circleRadius + width / 2F).toFloat() + calculateHorizontalPadding()
                     val endY = (sin(Math.toRadians((angleStart + angleEnd).toDouble()))
                             * circleRadius + centerY).toFloat() + paddingTop
-                    canvas?.drawCircle(endX, endY, circleWidth / 2, circlePaint)
+                    canvas?.drawCircle(endX, endY, circleWidth / 2, circlePaint)*/
                 }
             }
         }
@@ -284,8 +297,46 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
             paddingLeft - paddingRight
         }
 
+    private fun drawGaps(canvas: Canvas?) {
+        val centerY = outerCircleRadius + outerCircleWidth / 2f +
+                secondaryCircleWidth * 2 + secondaryCircleRadius * 2 + paddingTop
+
+        val gap = 8f
+        circlePaint.strokeWidth = gap
+        circlePaint.style = Paint.Style.STROKE
+        circlePaint.color = Color.WHITE
+
+        val step = (360 / scoreList.size).toFloat()
+
+
+        for (i in scoreList.indices) {
+
+            circlePaint.shader = null
+
+            val currentAngle = 90F + step * i
+            val angleStart = currentAngle /*+ gap*/
+
+            val startX =
+                (cos(Math.toRadians(angleStart.toDouble())) * (circleRadius - circleWidth / 2) + width / 2F).toFloat() +
+                        calculateHorizontalPadding()
+            val startY = (sin(Math.toRadians(angleStart.toDouble()))
+                    * (circleRadius - circleWidth / 2) + centerY).toFloat() + paddingTop
+
+            val endX = (cos(Math.toRadians(angleStart.toDouble())) * (circleRadius + circleWidth / 2) + width / 2F).toFloat() +
+                    calculateHorizontalPadding()
+            val endY = (sin(Math.toRadians(angleStart.toDouble()))
+                    * (circleRadius + circleWidth / 2) + centerY).toFloat() + paddingTop
+
+            canvas?.drawLine(startX, startY, endX, endY, circlePaint)
+
+            circlePaint.shader = shadow
+
+            canvas?.drawLine(startX, startY, endX, endY, circlePaint)
+        }
+    }
+
     /**
-    * Draws all inner text in primary circle*/
+     * Draws all inner text in primary circle*/
     private fun drawInnerText(canvas: Canvas?) {
         drawPrimaryText(canvas)
         if (primaryText.isNotEmpty() && secondaryText.isNotEmpty() && tertiaryText.isNotEmpty())
@@ -295,7 +346,7 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
     }
 
     /**
-    * Draws big text (usually used for average score value)*/
+     * Draws big text (usually used for average score value)*/
     private fun drawPrimaryText(canvas: Canvas?) {
         if (primaryText.isNotEmpty()) {
             textPaint.color = primaryTextColor
@@ -317,7 +368,7 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
     }
 
     /**
-    * Draws small inner text (second line)*/
+     * Draws small inner text (second line)*/
     private fun drawSecondaryText(canvas: Canvas?) {
         if (secondaryText.isNotEmpty()) {
             textPaint.color = secondaryTextColor
@@ -326,11 +377,11 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
                 if (primaryText.isNotEmpty()) circleRadius / 8F else circleRadius / 6.4F
             textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
             val textWidth =
-                if (primaryText.isNotEmpty()) textPaint.measureText(secondaryText) else circleRadius * 2 - circleWidth
+                if (primaryText.isNotEmpty()) textPaint.measureText(secondaryText) else (circleRadius - circleWidth) * 2
             val textX = width / 2f + calculateHorizontalPadding()
             var textY = outerCircleWidth / 2f + outerCircleRadius +
-                    secondaryCircleRadius + secondaryCircleWidth + textPaint.textSize + paddingTop
-            if (primaryText.isNotEmpty()) textY += textPaint.textSize + secondaryCircleRadius
+                    secondaryCircleRadius + secondaryCircleWidth + paddingTop
+            if (primaryText.isNotEmpty()) textY += textPaint.textSize * 2 + secondaryCircleRadius
 
 
             val staticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -357,7 +408,7 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
     }
 
     /**
-    * Draws small inner text (third line)*/
+     * Draws small inner text (third line)*/
     private fun drawTertiaryText(canvas: Canvas?) {
         if (tertiaryText.isNotEmpty()) {
             textPaint.color = tertiaryTextColor
@@ -380,7 +431,7 @@ class FullScoreView(context: Context, attrs: AttributeSet) : View(context, attrs
     }
 
     /**
-    * Draws dotted line between score value and text */
+     * Draws dotted line between score value and text */
     private fun drawInnerLine(canvas: Canvas?) {
         val y = outerCircleWidth / 2f + outerCircleRadius + circleRadius / 8F +
                 paddingTop + secondaryCircleWidth + secondaryCircleRadius * 2

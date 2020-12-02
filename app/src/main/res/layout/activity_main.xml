@@ -26,24 +26,23 @@
             app:secondaryText="достоверность"
             app:tertiaryText="65%" />
 
-        <com.bankcalendar.scorecircle.ScoreCircle
+        <com.bankcalendar.circlesview.CirclesDiagramView
             android:id="@+id/score_circle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:commentaryText="Предельная кредитная нагрузка 50%"
-            app:currentScore="700"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:maxScore="1000"
-            app:primaryText="228%"
-            app:secondaryText="text" />
+            app:primaryText="1000"
+            app:secondaryText="достоверность"
+            app:tertiaryText="50%" />
 
         <ru.kpfu.itis.dynamicgraph.DynamicsGraphView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

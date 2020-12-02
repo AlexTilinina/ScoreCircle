@@ -24,9 +24,12 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.getColor(this, R.color.colorScorePointBlue),
             ContextCompat.getColor(this, R.color.colorScorePointPurple)
         )
-        val scoreList = intArrayOf(800, 0, 600, 500, 1000)
+        val scoreList = intArrayOf(356, 256, 456, 856, 560)
+        val listTest = mutableListOf(356, 256, 1000, 856, 560)
 
-        val score = scoreList.filter { it != 0 }.average().toInt()
+        score_circle.setValues(listTest)
+
+        /*val score = scoreList.filter { it != 0 }.average().toInt()
         val color = when (score) {
             in 0..249 -> R.color.colorScorePointRed
             in 250..499 -> R.color.colorScorePointYellow
@@ -36,6 +39,6 @@ class MainActivity : AppCompatActivity() {
         }
         circlesDiagramView.primaryText = score.toString()
         circlesDiagramView.scoreList = scoreList
-        circlesDiagramView.circleColors = colors
+        circlesDiagramView.circleColors = colors*/
     }
 }

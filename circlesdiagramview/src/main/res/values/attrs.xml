@@ -3,15 +3,20 @@
     <declare-styleable name="CirclesDiagramView">
         <attr name="circleCount" format="integer"/>
         <attr name="maxScore" format="integer"/>
+
         <attr name="primaryText" format="string"/>
+        <attr name="innerTextColor" format="color"/>
+
         <attr name="secondaryText" format="string"/>
-        <attr name="commentaryText" format="string"/>
+        <attr name="secondaryTextColor" format="color"/>
+
+        <attr name="tertiaryText" format="string"/>
+        <attr name="tertiaryTextColor" format="color"/>
+
         <attr name="circleWidth" format="dimension"/>
         <attr name="outerCircleRadius" format="dimension"/>
-        <attr name="innerTextColor" format="color"/>
-        <attr name="commentaryTextColor" format="color"/>
-        <attr name="commentaryLineColor" format="color"/>
-        <attr name="labelsTextColor" format="color"/>
+
+        <attr name="lineColor" format="color"/>
         <attr name="dotColor" format="color"/>
         <attr name="backgroundCircleColor" format="color"/>
     </declare-styleable>
